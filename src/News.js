@@ -1,110 +1,107 @@
-import React, { Component } from 'react'
-import NewsItem from './NewsItem';
-import Spinner from './Spinner';
+import React, { useState, useEffect } from "react";
+import NewsItem from "./NewsItem";
+import Spinner from "./Spinner";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useSelector, useDispatch } from "react-redux";
+import { addArticles, setArticles } from "./Redux/slice/articlesSlice";
+import { incrementPage, setPage } from "./Redux/slice/pageSlice";
+import { fetchNews } from "./Redux/slice/articlesSlice";
 
+const News = (props) => {
+  const page = useSelector((state) => state.page.pageNum);
+  console.log(page);
+  
+  const { articles, loading,totalResults } = useSelector((state) => state.articles);
+  console.log(articles,loading)
+  const dispatch = useDispatch();
 
+  
 
-export default class News extends Component {
- 
+  const capitalizeFirstLetter = (val) => {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+  };
 
+  const updateNews = async () => {
+    dispatch(
+      fetchNews({
+        country: props.country,
+        category: props.category,
+        apiKey: props.apiKey,
+        pageSize: props.pageSize,
+        page,
+      })
+    ); // Fetch more articles using Redux action
 
-
-    constructor(){
-        super();
-        this.state={
-            articles:[],
-            loading:false,
-            page:1
-        }
-
-    }
+    
+    // Update articles in Redux store
    
-    async componentDidMount(){
-      console.log("cdm");
-      let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=3d50d30d79e4415da89f6245a8e08429&page=1&pageSize=${this.props.pageSize}`
-      this.setState({loading:true})
-      let data=await fetch(url);
-      let parsedData= await data.json();
-      console.log(parsedData);
-      this.setState({articles:parsedData.articles,
-        totalResults:parsedData.totalResults,
-        loading:false
 
+    dispatch(setPage(1)); // Reset page to 1 when fetching new data
+  };
+  const fetchMoreData = async () => {
+   
+
+    dispatch(incrementPage()); // Increment page when fetching more data
+
+    dispatch(
+      fetchNews({
+        country: props.country,
+        category: props.category,
+        apiKey: props.apiKey,
+        pageSize: props.pageSize,
+        page,
       })
+    ); // Fetch more articles using Redux action
 
+     // Add more articles to Redux store
+    // setTotalResults(parsedData.totalResults);
+  };
 
+  useEffect(() => {
+    document.title = `${capitalizeFirstLetter(props.category)}-NewsMonkey`;
+    updateNews();
+  }, []);
 
-    }
-    handleNextButton=async()=>{
-      if(!(this.state.page+1> Math.ceil(this.state.totalResults/this.props.pageSize))){
-
-      
-      
-
-
-      let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=3d50d30d79e4415da89f6245a8e08429&page=${this.state.page+1}&pageSize=${this.props.pageSize}`
-      this.setState({loading:true})
-      let data=await fetch(url);
-      let parsedData= await data.json();
-      console.log(parsedData);
-      this.setState({
-        page:this.state.page+1,
-        articles:parsedData.articles,
-        loading:false
-      })
-    }
-    
-
-
-    }
-    handlePrevButton=async()=>{
-      let url=`https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=3d50d30d79e4415da89f6245a8e08429&page=${this.state.page-1}&pageSize=${this.props.pageSize}`
-      this.setState({loading:true})
-      let data=await fetch(url);
-      let parsedData= await data.json();
-      console.log(parsedData);
-      this.setState({
-        page:this.state.page-1,
-        articles:parsedData.articles,
-        loading:false
-      })
-
-
-    }
-  render() {
-    
-    return (
-        
-      <div className='container my-3' >
-        <h2 className='text-center'style={{margin:"35px"}}>NewsMonkey-Top Headlines</h2>
-        {this.state.loading&&<Spinner/>}
-        
-        <div className='row'>
-        {!this.state.loading&&this.state.articles.map((element)=>{
-          return <div className='col-md-4'key={element.url}>
-          <NewsItem title={element.title?element.title.slice(0,88):""} description={element.description?element.description.slice(0,45):""}
-          imageUrl={element.urlToImage}
-          newsUrl={element.url}/>
+  return (
+    <>
+      <h2
+        className="text-center"
+        style={{ margin: "35px", marginTop: "100px" }}
+      >
+        NewsMonkey-Top Headlines {capitalizeFirstLetter(props.category)}
+      </h2>
+      {loading && <Spinner />}
+      <InfiniteScroll
+        dataLength={articles.length}
+        next={fetchMoreData}
+        hasMore={articles.length !== totalResults}
+        loader={<Spinner />}
+      >
+        <div className="container">
+          <div className="row">
+            {articles.map((element) => {
+              return (
+                <div className="col-md-4" key={element.url}>
+                  <NewsItem
+                    title={element.title ? element.title.slice(0, 88) : ""}
+                    description={
+                      element.description
+                        ? element.description.slice(0, 45)
+                        : ""
+                    }
+                    imageUrl={element.urlToImage}
+                    newsUrl={element.url}
+                    author={element.author}
+                    date={element.publishedAt}
+                    source={element.source.name}
+                  />
+                </div>
+              );
+            })}
           </div>
-          
-        })}
-            
-     
-      
-      </div>
-      <div className='container  d-flex justify-content-between'>
-    
-      <button disabled={this.state.page<=1}type="button"onClick={this.handlePrevButton} className="btn btn-dark my-3 ">&laquo;Previous</button>
-      <button disabled={this.state.page+1> Math.ceil(this.state.totalResults/this.props.pageSize)} type="button"onClick={this.handleNextButton} className="btn btn-dark my-3 "> Next &raquo; </button>
-      </div>
-
-
-      </div>
-     
-      
-      
-
-      
-    )
-  }
-}
+        </div>
+      </InfiniteScroll>
+    </>
+  );
+};
+export default News;

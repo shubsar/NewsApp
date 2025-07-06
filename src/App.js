@@ -6,13 +6,28 @@ import Navbar from './Navbar';
 import News from './News';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+
+
+
+
+
+const pageSize=10;
+ const apiKey=  "3d50d30d79e4415da89f6245a8e08429";
+
+  
+
 const router= createBrowserRouter([
   {
     path:"/",
     element:(
       <>
+       <Navbar/>
        
-       <News key="general" pageSize={5} country={'us'} category={"general"}/>
+       
+       
+    
+       
+       <News apiKey={apiKey}  key="general" pageSize={pageSize} country={'us'} category={"general"}/>
       </>
     )
     
@@ -21,8 +36,9 @@ const router= createBrowserRouter([
     path:"/business",
     element:(
       <>
+       <Navbar/>
       
-       <News key="business" pageSize={5} country={'us'} category={"business"}/>
+       <News apiKey={apiKey}  key="business" pageSize={pageSize} country={'us'} category={"business"}/>
       </>
     )
     
@@ -32,8 +48,9 @@ const router= createBrowserRouter([
     path:"/entertainment",
     element:(
       <>
+       <Navbar/>
     
-       <News key="entertainment"  pageSize={5} country={'us'} category={"entertainment"}/>
+       <News apiKey={apiKey} key="entertainment"  pageSize={pageSize} country={'us'} category={"entertainment"}/>
       </>
     )
     
@@ -43,8 +60,9 @@ const router= createBrowserRouter([
     path:"/general",
     element:(
       <>
+       <Navbar/>
      
-       <News key="general" pageSize={5} country={'us'} category={"general"}/>
+       <News apiKey={apiKey} key="general" pageSize={pageSize} country={'us'} category={"general"}/>
       </>
     )
     
@@ -54,8 +72,9 @@ const router= createBrowserRouter([
     path:"/health",
     element:(
       <>
+       <Navbar/>
        
-       <News key="health" pageSize={5} country={'us'} category={"health"}/>
+       <News apiKey={apiKey} key="health" pageSize={pageSize} country={'us'} category={"health"}/>
       </>
     )
     
@@ -65,8 +84,9 @@ const router= createBrowserRouter([
     path:"/science",
     element:(
       <>
+       <Navbar/>
       
-       <News key="science" pageSize={5} country={'us'} category={"science"}/>
+       <News apiKey={apiKey} key="science" pageSize={pageSize} country={'us'} category={"science"}/>
       </>
     )
     
@@ -76,8 +96,9 @@ const router= createBrowserRouter([
     path:"/sports",
     element:(
       <>
+       <Navbar/>
       
-       <News key="sports" pageSize={5} country={'us'} category={"sports"}/>
+       <News apiKey={apiKey} key="sports" pageSize={pageSize} country={'us'} category={"sports"}/>
       </>
     )
     
@@ -87,8 +108,8 @@ const router= createBrowserRouter([
     path:"/technology",
     element:(
       <>
-      
-       <News key="technology"  pageSize={5} country={'us'} category={"technology"}/>
+       <Navbar/>
+       <News apiKey={apiKey} key="technology"  pageSize={pageSize} country={'us'} category={"technology"}/>
       </>
     )
     
@@ -97,15 +118,18 @@ const router= createBrowserRouter([
 ])
 
 
-export default class App extends Component {
+ const App=()=> {
   
-  render() {
+
+  
+ 
    
     return (
       <div>
-        <Navbar/>
+       
         
         <RouterProvider  router={router}>
+        
        
 
         </RouterProvider>
@@ -114,7 +138,8 @@ export default class App extends Component {
       </div>
     )
   }
-}
+  export default App;
+
 
 
 
