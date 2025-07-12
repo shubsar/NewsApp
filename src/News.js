@@ -9,13 +9,13 @@ import { fetchNews } from "./Redux/slice/articlesSlice";
 
 const News = (props) => {
   const page = useSelector((state) => state.page.pageNum);
-  console.log(page);
-  
-  const { articles, loading,totalResults } = useSelector((state) => state.articles);
-  console.log(articles,loading)
-  const dispatch = useDispatch();
+  console.log("page:", page);
 
-  
+  const { articles, loading, totalResults } = useSelector(
+    (state) => state.articles
+  );
+  console.log(articles, loading, totalResults);
+  const dispatch = useDispatch();
 
   const capitalizeFirstLetter = (val) => {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
@@ -28,20 +28,21 @@ const News = (props) => {
         category: props.category,
         apiKey: props.apiKey,
         pageSize: props.pageSize,
-        page,
+        page
       })
-    ); // Fetch more articles using Redux action
+    );
+    // Fetch more articles using Redux action
 
-    
     // Update articles in Redux store
-   
 
     dispatch(setPage(1)); // Reset page to 1 when fetching new data
   };
   const fetchMoreData = async () => {
-   
+    dispatch(incrementPage());
 
-    dispatch(incrementPage()); // Increment page when fetching more data
+    // Increment page when fetching more data
+    console.log("Fetching more data for page:", page);
+    // Increment page number in Redux store
 
     dispatch(
       fetchNews({
@@ -49,12 +50,16 @@ const News = (props) => {
         category: props.category,
         apiKey: props.apiKey,
         pageSize: props.pageSize,
-        page,
+        page: page,
       })
-    ); // Fetch more articles using Redux action
+    );
+    dispatch(addArticles(articles));
+    //  dispatch(setPage(page+1)); // Fetch more articles using Redux action
+    // Add fetched articles to Redux store
 
-     // Add more articles to Redux store
+    // Add more articles to Redux store
     // setTotalResults(parsedData.totalResults);
+    // setArticles(articles);
   };
 
   useEffect(() => {

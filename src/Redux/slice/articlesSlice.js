@@ -1,6 +1,6 @@
 import { createSlice,createAsyncThunk } from "@reduxjs/toolkit";
 export const fetchNews = createAsyncThunk("fetchNews", async (props) => {
-   const res = await fetch(`https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${props.page+1}&pageSize=${props.pageSize}`);
+   const res = await fetch(`https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${props.page}&pageSize=${props.pageSize}`);
    return res?.json();
 });
 const initialState = {
@@ -34,6 +34,8 @@ const articlesSlice = createSlice({
                 state.loading=false
                 state.totalResults = action.payload.totalResults; // Update total results
             })
+            
+            
             .addCase(fetchNews.rejected, (state, action) => {
                 state.loading=false
             

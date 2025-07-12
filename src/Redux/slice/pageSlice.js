@@ -9,13 +9,13 @@ const pageSlice=createSlice({
     initialState,
     reducers:{
         incrementPage:(state)=>{
-            state.page=state.page+1;
+            state.pageNum=state.pageNum+1;
         },
         decrementPage:(state)=>{
-            state.page=state.page-1;
+            state.pageNum=state.pageNum-1;
         },
         setPage:(state,action)=>{
-            state.page=action.payload;
+            state.pageNum=action.payload;
         }
     }
 })
